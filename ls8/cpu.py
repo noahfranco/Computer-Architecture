@@ -7,12 +7,23 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        self.ram = 256,  
+        self.pc = 0,
+        self.reg = [0] * 8,
+        self.HLT = False,
+        self.LDI =  0b10000010,
+        self.PRN =  0b01000111
+
+    def ram_read(self):
+        pass
+
+    def ram_write(self):
         pass
 
     def load(self):
         """Load a program into memory."""
 
-        address = 0
+        address = 0 # the pointer
 
         # For now, we've just hardcoded a program:
 
@@ -62,4 +73,4 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+       pass
