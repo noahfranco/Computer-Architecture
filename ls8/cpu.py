@@ -6,41 +6,44 @@ class CPU:
     """Main CPU class."""
 
     def __init__(self):
-        """Construct a new CPU."""
         self.ram = 256,  
-        self.pc = 0,
+        self.pc = 0,# the pointer
         self.reg = [0] * 8,
-        self.HLT = False,
-        self.LDI =  0b10000010,
-        self.PRN =  0b01000111
 
-    def ram_read(self):
-        pass
+    def ram_read(self, address):
+        # should accept the address to read and return the value stored there.
+        self.ram.append(address)
+        return addressOne
 
-    def ram_write(self):
-        pass
+    def ram_write(self, address, value):
+        #should accept a value to write, and the address to write it to.
+        self.ram[address] = value
 
     def load(self):
-        """Load a program into memory."""
 
-        address = 0 # the pointer
+        address = 0
 
-        # For now, we've just hardcoded a program:
+        HLT = 0b00000001
+        PRN = 0b01000111
+        LDI = 0b10000010
 
-        program = [
+
+        memory = [
             # From print8.ls8
-            0b10000010, # LDI R0,8
+            LDI, # LDI R0,8
             0b00000000,
             0b00001000,
-            0b01000111, # PRN R0
+            PRN, # PRN R0
             0b00000000,
-            0b00000001, # HLT
+            HLT, # HLT
         ]
 
-        for instruction in program:
+        for instruction in memory:
             self.ram[address] = instruction
             address += 1
 
+
+# Day Three Below
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
