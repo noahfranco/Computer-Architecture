@@ -74,6 +74,7 @@ class CPU:
             raise Exception("Unsupported ALU operation")
 
     #  For Sprint
+
     def CMP(self, reg_a, reg_b):
         
         if self.ram[reg_a] == self.ram[reg_b]:
@@ -164,50 +165,27 @@ class CPU:
 
             # Sprint challenge below // CMP, JMP, JEQ, JNE
 
+        # Kind of works
              if opcode == "CMP": # if they place were we in our memior is equal to the CMP
-               self.CMP(operand_a, operand_b)
-               self.pc += 3
+               self.CMP((operand_a), (operand_b))
+               self.pc += 3 # itrate pointer three times
             #    print("Is this running", self.pc)
 
-             if opcode == "JMP":
-                self.pc = self.ram_read(operand_a)
+             if opcode == "JMP": # if our code is JMP
+                self.pc = self.ram_read(operand_a) # our pointer is going to read the operand of 1
             
              if opcode == "JEQ":
                 if self.fl == "HLT":
                     self.pc = self.ram_read(operand_a)
                 else:
-                    self.pc += 2
+                    self.pc += 2 # iterate pointer two times
 
              if opcode == "JNE":
                  if self.fl != "HLT":
                      self.pc = self.ram_read(operand_a)
                  else:
-                    self.pc += 2
-
-
-
-
-
-
-
-
-
-            #  if self.ram[self.pc] == "CMP": # if they place were we in our memior is equal to the CMP
-            #    self.CMP(operand_a, operand_b)
-            #    self.pc += 3
-            #    print("Is this running", self.pc)
-
-            #  if self.ram[self.pc] == "JMP":
-            #     self.pc = self.ram_read(operand_a)
+                    self.pc += 2 # iterate pointer two times
             
-            #  if self.ram[self.pc] == "JEQ":
-            #     if self.fl == "HLT":
-            #         self.pc = self.ram_read(operand_a)
-            #     else:
-            #         self.pc += 2
-
-            #  if self.ram[self.pc] == "JNE":
-            #      if self.fl != "HLT":
-            #          self.pc = self.ram_read(operand_a)
-            #      else:
-            #         self.pc += 2
+             if opcode == "HLT":
+                self.pc = 0 # our pointer is back at zero
+                self.running = False
