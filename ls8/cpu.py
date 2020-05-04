@@ -29,7 +29,7 @@ class CPU:
             0b10100111: "CMP",
             0b01010100: "JMP",
             0b01010101: "JEQ",
-            0b01010110: "JEQ",
+            0b01010110: "JNE",
         }
 
     def ram_read(self, address):
@@ -77,9 +77,9 @@ class CPU:
 
     def CMP(self, reg_a, reg_b):
         
-        if self.ram[reg_a] == self.ram[reg_b]:
+        if self.registers[reg_a] == self.registers[reg_b]:
             self.fl = "HLT"
-        elif self.ram[reg_a] > self.ram[reg_b]:
+        elif self.registers[reg_a] > self.registers[reg_b]:
             self.fl = 0b00000010
         else:
             self.fl = 0b00000100
@@ -120,9 +120,6 @@ class CPU:
              if opcode == "PRN":
                 print(self.registers[operand_a])
                 self.pc += 2
-
-            #  if not sets_pc:
-            #     self.pc += 1 + num_operands
             
              if opcode == "LDI":
                 self.registers[operand_a] = operand_b
@@ -172,17 +169,17 @@ class CPU:
             #    print("Is this running", self.pc)
 
              if opcode == "JMP": # if our code is JMP
-                self.pc = self.ram_read(operand_a) # our pointer is going to read the operand of 1
+                self.pc = self.registers[operand_a] # our pointer is going to read the operand of 1
             
              if opcode == "JEQ":
                 if self.fl == "HLT":
-                    self.pc = self.ram_read(operand_a)
+                    self.pc = self.registers[operand_a]
                 else:
                     self.pc += 2 # iterate pointer two times
 
              if opcode == "JNE":
                  if self.fl != "HLT":
-                     self.pc = self.ram_read(operand_a)
+                     self.pc = self.registers[operand_a]
                  else:
                     self.pc += 2 # iterate pointer two times
             
