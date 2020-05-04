@@ -10,6 +10,8 @@ class CPU:
         self.ram = [0] * 256
         self.registers = [0] * 8
         self.registers[7] = 0xF4
+        # LS-8 flag below
+        self.fl = 0b00000000
 
         self.sp = 7
 
@@ -23,19 +25,12 @@ class CPU:
             0b01010000: "CALL", 
             0b10100000: "ADD",
             0b00010001: "RET",
-        }   
-
-        # self.branchtable = {
-        #     "HLT": self.hlt,
-        #     "LDI": self.ldi,
-        #     "PRN": self.prn,
-        #     "CALL": self.call,
-        #     "RET": self.ret, 
-        #     "PUSH": self.push, # for stack 
-        #     "POP": self.pop, # for stack
-        #     "ADD": self.add,
-        #     "MUL": self.mul
-        # }
+            # for sprint challenge
+            0b10100111: "CMP",
+            0b01010100: "JMP",
+            0b01010101: "JEQ",
+            0b01010110: "JNE",
+        }
 
     def ram_read(self, address):
         # should accept the address to read and return the value stored there.
@@ -78,6 +73,17 @@ class CPU:
         else:
             raise Exception("Unsupported ALU operation")
 
+    #  For Sprint
+
+    def CMP(self, reg_a, reg_b):
+        
+        if self.registers[reg_a] == self.registers[reg_b]:
+            self.fl = "HLT"
+        elif self.registers[reg_a] > self.registers[reg_b]:
+            self.fl = 0b00000010
+        else:
+            self.fl = 0b00000100
+
 
 
     # def trace(self):
@@ -114,11 +120,6 @@ class CPU:
              if opcode == "PRN":
                 print(self.registers[operand_a])
                 self.pc += 2
-
-            
-
-            #  if not sets_pc:
-            #     self.pc += 1 + num_operands
             
              if opcode == "LDI":
                 self.registers[operand_a] = operand_b
@@ -159,60 +160,29 @@ class CPU:
                 self.registers[self.sp] += 1
                 self.pc += 2
 
+            # Sprint challenge below // CMP, JMP, JEQ, JNE
 
-    # def hlt(self, _, __):
-    #     self.running = False
-    
-    # def prn(self, op_a, _):
-    #     print(self.registers[op_a])
+        # Kind of works
+             if opcode == "CMP": # if they place were we in our memior is equal to the CMP
+               self.CMP((operand_a), (operand_b))
+               self.pc += 3 # itrate pointer three times
+            #    print("Is this running", self.pc)
 
-    # def ldi(self, op_a, op_b):
-    #     self.registers[op_a] = op_b
-    #     self.pc += 3
+             if opcode == "JMP": # if our code is JMP
+                self.pc = self.registers[operand_a] # our pointer is going to read the operand of 1
+            
+             if opcode == "JEQ":
+                if self.fl == "HLT":
+                    self.pc = self.registers[operand_a]
+                else:
+                    self.pc += 2 # iterate pointer two times
 
-    # Task Four
-    # def call(self, op_a, _):
-    #     # self.registers[7] -= 1
-    #     # sp = self.registers[7]
-    #     # self.ram_write(sp, self.pc + 2)
-
-    #     # self.pc = self.registers[op_a]
-    #     return_address = self.pc + 2
-    #     self.registers[self.sp] -= 1
-    #     self.ram[self.registers[self.sp]] = return_address
-    #     reg_num = self.ram[self.pc + 1]
-    #     sub_address = self.registers[reg_num]
-    #     self.pc = sub_address
-
-    # def add(self, op_a, op_b):
-    #     self.registers[op_a] += self.registers[op_b]
-    #     self.pc += 3
-
-    
-    # def mul(self, op_a, op_b):
-    #     self.registers[op_a] * self.registers[op_b]
-    #     self.pc += 3
-
-
-    # def ret(self, op_a, _):
-    #     # sp =self.registers[7]
-    #     # return_address = self.ram_read(sp)
-    #     return_address = self.ram[self.registers[self.sp]]
-    #     self.registers[self.sp] +=1
-    #     self.pc = return_address
-
-    # def push(self, op_a, _):
-    #     self.registers[self.sp] -= 1
-    #     sp = self.registers[7]
-    #     value = self.registers[op_a]
-
-    #     self.ram_write(sp, value)
-
-    # def pop(self, op_a, _):
-    #     sp = self.registers[7]
-    #     value = self.ram_read(sp)
-
-    #     self.registers[op_a] = value
-
-    #     self.registers[7] += 1
-
+             if opcode == "JNE":
+                 if self.fl != "HLT":
+                     self.pc = self.registers[operand_a]
+                 else:
+                    self.pc += 2 # iterate pointer two times
+            
+             if opcode == "HLT":
+                self.pc = 0 # our pointer is back at zero
+                self.running = False
